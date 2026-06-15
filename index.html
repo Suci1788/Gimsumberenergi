@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Detektif Energi - Gim Edukasi SD Kelas 3</title>
+    <!-- Tailwind CSS untuk Desain yang Responsif dan Menarik -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Google: Poppins agar ramah anak -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, rgba(224, 242, 254, 0.8) 0%, rgba(240, 253, 244, 0.8) 100%), url('https://i.imgur.com/3Rq3yXP.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            user-select: none;
+        }
+        .bounce-hover:hover {
+            transform: translateY(-4px);
+        }
+        /* Transisi Halaman */
+        .page-transition {
+            transition: all 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4 overflow-x-hidden">
+
+    <!-- Container Utama -->
+    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl border-4 border-emerald-400 overflow-hidden flex flex-col min-h-[600px] relative">
+        
+        <!-- Header / Papan Skor Utama -->
+        <header class="bg-gradient-to-r from-emerald-400 to-teal-500 p-4 text-white flex justify-between items-center shadow-md">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl">🕵️‍♂️</span>
+                <div>
+                    <h1 class="text-sm sm:text-lg font-bold tracking-wide">Detektif Energi</h1>
+                    <p class="text-xs text-emerald-100 font-semibold" id="level-indicator">Misi 1: Sortir Energi</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="bg-emerald-600/40 px-3 py-1.5 rounded-full flex items-center space-x-1.5 border border-emerald-200/30">
+                    <span class="text-xl">⭐</span>
+                    <span id="score-val" class="font-bold text-lg sm:text-xl">0</span>
+                </div>
+                <!-- Tombol Suara (SFX) -->
+                <button id="btn-sound" onclick="toggleSound()" class="p-2 bg-emerald-600/40 rounded-full hover:bg-emerald-600/70 transition">
+                    <svg id="sound-icon" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 18.75V5.25L7.75 9.5H4.5v5h3.25L12 18.75z" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Progress Bar Misi -->
+        <div class="w-full bg-emerald-100 h-3">
+            <div id="mission-progress" class="bg-yellow-400 h-full w-1/3 transition-all duration-500 rounded-r-full"></div>
+        </div>
+
+        <!-- AREA UTAMA PERMAINAN -->
+        <main class="flex-grow p-4 sm:p-6 flex flex-col justify-between relative" id="game-content">
+            
+            <!-- ====== HALAMAN 1: START / MENU ====== -->
+            <section id="page-start" class="flex flex-col items-center justify-center text-center space-y-6 my-auto">
+                <div class="relative">
+                    <div class="absolute -top-6 -left-6 text-4xl animate-bounce">💡</div>
+                    <div class="absolute -bottom-6 -right-6 text-4xl animate-bounce delay-150">🍃</div>
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='120' height='120'><circle cx='50' cy='50' r='45' fill='%2310B981'/><path d='M50 20 L65 50 L35 50 Z' fill='%23FBBF24'/><circle cx='50' cy='65' r='12' fill='%23FFF'/><path d='M46 60 H54 V70 H46 Z' fill='%231F2937'/></svg>" alt="Kiko Robot Energi" class="mx-auto w-28 h-28 drop-shadow-lg">
+                </div>
+                
+                <div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-teal-800 tracking-wide">PETUALANGAN DETEKTIF ENERGI</h2>
+                    <p class="text-sm sm:text-base text-gray-600 mt-2 max-w-md mx-auto">
+                        Halo Sahabat! Bantu Kiko menjadi <strong>Detektif Energi Hebat</strong>. Selesaikan 3 misi seru untuk menyelamatkan bumi kita! 🌍
+                    </p>
+                </div>
+
+                <div class="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-2xl max-w-sm">
+                    <p class="text-xs sm:text-sm text-emerald-800 font-semibold flex items-center justify-center gap-2">
+                        <span>🎯</span> Untuk Kelas 3 SD • Mengenal & Menghemat Energi
+                    </p>
+                </div>
+
+                <button onclick="startMission()" class="bounce-hover bg-yellow-400 hover:bg-yellow-500 text-teal-950 font-extrabold text-lg px-8 py-4 rounded-2xl shadow-lg border-b-8 border-yellow-600 transition-all transform active:scale-95">
+                    MULAI MISI SEKARANG! 🚀
+                </button>
+            </section>
+
+            <!-- ====== HALAMAN 2: MISI 1 (SORTIR ENERGI) ====== -->
+            <section id="page-misi-1" class="hidden flex-col space-y-4 my-auto">
+                <div class="text-center">
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1.5 rounded-full">MISI 1</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mt-1">Pilah Sumber Energi!</h2>
+                    <p class="text-xs sm:text-sm text-gray-600">Tekan salah satu tombol di bawah untuk mengelompokkan benda ini!</p>
+                </div>
+
+                <!-- Kartu Benda yang Harus Disortir -->
+                <div class="flex justify-center items-center py-4">
+                    <div id="m1-card" class="bg-amber-50 border-4 border-amber-300 rounded-3xl p-6 shadow-md w-64 text-center transform transition duration-300">
+                        <div id="m1-emoji" class="text-6xl mb-3">☀️</div>
+                        <h3 id="m1-title" class="text-xl font-extrabold text-amber-800">Matahari</h3>
+                        <p id="m1-desc" class="text-xs text-amber-600 mt-1 font-semibold">Energi panas yang melimpah setiap hari.</p>
+                    </div>
+                </div>
+
+                <!-- Tombol Pilihan Jawaban -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md mx-auto w-full">
+                    <button onclick="m1Answer('terbarukan')" class="bounce-hover bg-teal-500 hover:bg-teal-600 text-white font-bold p-4 rounded-2xl shadow border-b-4 border-teal-700 flex flex-col items-center justify-center">
+                        <span class="text-2xl">♻️</span>
+                        <span class="text-sm mt-1">Energi Terbarukan</span>
+                        <span class="text-[10px] opacity-80">(Ramah Lingkungan & Tidak Habis)</span>
+                    </button>
+                    <button onclick="m1Answer('tak_terbarukan')" class="bounce-hover bg-rose-500 hover:bg-rose-600 text-white font-bold p-4 rounded-2xl shadow border-b-4 border-rose-700 flex flex-col items-center justify-center">
+                        <span class="text-2xl">⛽</span>
+                        <span class="text-sm mt-1">Energi Tak Terbarukan</span>
+                        <span class="text-[10px] opacity-80">(Bisa Habis & Perlu Jutaan Tahun)</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ====== HALAMAN 3: MISI 2 (PASANG KEKUATAN) ====== -->
+            <section id="page-misi-2" class="hidden flex-col space-y-4 my-auto">
+                <div class="text-center">
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1.5 rounded-full">MISI 2</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mt-1">Pasangkan Sumber Energi & Manfaatnya!</h2>
+                    <p class="text-xs sm:text-sm text-gray-600">Pilih salah satu <b>Sumber Energi</b> lalu hubungkan ke <b>Manfaatnya</b>!</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 max-w-2xl mx-auto w-full pt-4">
+                    <!-- Kolom Sumber Energi -->
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-teal-700 uppercase tracking-wider text-center">⚡ Sumber Energi</p>
+                        <div id="m2-sources" class="space-y-2">
+                            <!-- Diisi oleh JS -->
+                        </div>
+                    </div>
+                    <!-- Kolom Manfaat -->
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-amber-700 uppercase tracking-wider text-center">🛠️ Manfaat / Kegunaan</p>
+                        <div id="m2-targets" class="space-y-2">
+                            <!-- Diisi oleh JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="m2-feedback" class="text-center text-sm font-semibold h-6 text-emerald-600"></div>
+            </section>
+
+            <!-- ====== HALAMAN 4: MISI 3 (HEMAT ENERGI DI RUMAH) ====== -->
+            <section id="page-misi-3" class="hidden flex-col space-y-4 my-auto">
+                <div class="text-center">
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1.5 rounded-full">MISI 3</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mt-1">Wah, Ada Pemborosan Energi!</h2>
+                    <p class="text-xs sm:text-sm text-gray-600">Ketuk/klik benda-benda yang boros energi agar mati dan hemat listrik!</p>
+                </div>
+
+                <!-- Scene Rumah Interaktif -->
+                <div class="relative bg-sky-100 border-4 border-dashed border-teal-300 rounded-3xl p-4 min-h-[250px] flex items-center justify-center overflow-hidden max-w-xl mx-auto w-full">
+                    <div class="grid grid-cols-2 gap-4 w-full">
+                        
+                        <!-- Alat Boros 1: TV Menyala Tanpa Orang -->
+                        <div id="house-tv" onclick="fixWaste('tv')" class="bg-white/80 p-3 rounded-2xl shadow border-2 border-orange-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition transform relative">
+                            <span class="absolute top-2 right-2 px-1.5 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-bold rounded-full animate-pulse id-status">BOROS!</span>
+                            <span class="text-4xl" id="tv-icon">📺</span>
+                            <p class="text-xs font-bold text-gray-700 mt-1 text-center">TV Menyala Tanpa Orang</p>
+                            <span id="tv-btn" class="mt-2 text-[10px] bg-rose-500 text-white font-bold px-2 py-1 rounded">Matikan TV</span>
+                        </div>
+
+                        <!-- Alat Boros 2: Lampu Kamar di Siang Hari -->
+                        <div id="house-light" onclick="fixWaste('light')" class="bg-white/80 p-3 rounded-2xl shadow border-2 border-orange-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition transform relative">
+                            <span class="absolute top-2 right-2 px-1.5 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-bold rounded-full animate-pulse id-status">BOROS!</span>
+                            <span class="text-4xl" id="light-icon">💡</span>
+                            <p class="text-xs font-bold text-gray-700 mt-1 text-center">Lampu Menyala Siang Hari</p>
+                            <span id="light-btn" class="mt-2 text-[10px] bg-rose-500 text-white font-bold px-2 py-1 rounded">Matikan Lampu</span>
+                        </div>
+
+                        <!-- Alat Boros 3: Keran Air Bocor -->
+                        <div id="house-water" onclick="fixWaste('water')" class="bg-white/80 p-3 rounded-2xl shadow border-2 border-orange-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition transform relative">
+                            <span class="absolute top-2 right-2 px-1.5 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-bold rounded-full animate-pulse id-status">BOROS!</span>
+                            <span class="text-4xl" id="water-icon">🚰</span>
+                            <p class="text-xs font-bold text-gray-700 mt-1 text-center">Keran Air Menetes Terus</p>
+                            <span id="water-btn" class="mt-2 text-[10px] bg-rose-500 text-white font-bold px-2 py-1 rounded">Tutup Keran</span>
+                        </div>
+
+                        <!-- Alat Boros 4: AC Menyala Saat Jendela Terbuka -->
+                        <div id="house-ac" onclick="fixWaste('ac')" class="bg-white/80 p-3 rounded-2xl shadow border-2 border-orange-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition transform relative">
+                            <span class="absolute top-2 right-2 px-1.5 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-bold rounded-full animate-pulse id-status">BOROS!</span>
+                            <span class="text-4xl" id="ac-icon">🥶</span>
+                            <p class="text-xs font-bold text-gray-700 mt-1 text-center">AC Menyala Jendela Terbuka</p>
+                            <span id="ac-btn" class="mt-2 text-[10px] bg-rose-500 text-white font-bold px-2 py-1 rounded">Atur AC & Jendela</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-sm font-bold text-emerald-800" id="m3-count-text">Sisa Alat Boros: 4 / 4</p>
+                </div>
+            </section>
+
+            <!-- ====== HALAMAN 5: SERTIFIKAT / HASIL ====== -->
+            <section id="page-end-screen" class="hidden flex-col items-center justify-center text-center space-y-6 my-auto">
+                <div class="bg-gradient-to-r from-yellow-400 via-orange-300 to-yellow-500 p-2 rounded-3xl shadow-xl w-full max-w-md">
+                    <div class="bg-white rounded-2xl p-6 border-4 border-yellow-400">
+                        <span class="text-6xl animate-bounce inline-block">🏆</span>
+                        <h2 class="text-2xl font-black text-amber-600 mt-2">SERTIFIKAT KELULUSAN</h2>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Detektif Energi Cilik</p>
+                        
+                        <div class="my-6 border-y border-dashed border-gray-300 py-4">
+                            <p class="text-xs text-gray-600">Diberikan kepada Petualang Hebat yang telah berhasil menyelamatkan energi bumi.</p>
+                            <p class="text-2xl font-extrabold text-teal-800 mt-2" id="cert-player">Detektif Cilik Hebat</p>
+                        </div>
+
+                        <div class="flex justify-around items-center">
+                            <div>
+                                <p class="text-[10px] text-gray-400 uppercase">Misi Selesai</p>
+                                <p class="text-lg font-bold text-teal-700">100% LULUS</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-gray-400 uppercase">Skor Akhir</p>
+                                <p class="text-lg font-bold text-teal-700" id="cert-score">300 Poin</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+                    <button onclick="resetGame()" class="bounce-hover w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md border-b-4 border-teal-700 transition">
+                        Main Lagi 🔄
+                    </button>
+                </div>
+            </section>
+
+            <!-- Dialog Feedback Mengambang -->
+            <div id="pop-feedback" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg font-bold text-sm flex items-center space-x-2 opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+                <span id="pop-emoji">🎉</span>
+                <span id="pop-text">Hebat Sekali!</span>
+            </div>
+
+        </main>
+
+        <!-- Petunjuk Kiko di bagian bawah -->
+        <footer class="bg-emerald-50 p-4 border-t-2 border-emerald-100 flex items-center space-x-3">
+            <div class="bg-emerald-500 p-2 rounded-xl flex-shrink-0">
+                <span class="text-2xl">🤖</span>
+            </div>
+            <div class="flex-grow">
+                <p class="text-xs font-semibold text-emerald-800 uppercase tracking-widest">Kiko Berkata:</p>
+                <p id="kiko-speech" class="text-xs sm:text-sm text-gray-700 font-medium">Klik tombol "MULAI MISI" untuk menjelajah dunia energi!</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Logika Javascript Interaktif -->
+    <script>
+        // --- DATA PERMAINAN ---
+        const MISI_1_DATA = [
+            { id: 1, name: "Matahari", emoji: "☀️", type: "terbarukan", desc: "Matahari tidak akan pernah habis dan ramah lingkungan." },
+            { id: 2, name: "Bensin (Minyak Bumi)", emoji: "⛽", type: "tak_terbarukan", desc: "Bensin bisa habis jika dipakai terus-menerus." },
+            { id: 3, name: "Angin", emoji: "💨", type: "terbarukan", desc: "Angin berembus terus gratis dan bisa jadi listrik." },
+            { id: 4, name: "Batubara", emoji: "🪨", type: "tak_terbarukan", desc: "Hasil tambang bumi yang butuh jutaan tahun untuk terbentuk kembali." },
+            { id: 5, name: "Air Mengalir", emoji: "💧", type: "terbarukan", desc: "Aliran air sungai melimpah dan menggerakkan turbin." },
+            { id: 6, name: "Gas Alam", emoji: "🔥", type: "tak_terbarukan", desc: "Gas dari perut bumi untuk memasak kompor gas." }
+        ];
+
+        const MISI_2_DATA = {
+            sources: [
+                { id: "s1", name: "☀️ Panas Matahari", match: "t1" },
+                { id: "s2", name: "💨 Tiupan Angin", match: "t2" },
+                { id: "s3", name: "💧 Air Terjun", match: "t3" },
+                { id: "s4", name: "🔌 Arus Listrik", match: "t4" }
+            ],
+            targets: [
+                { id: "t2", name: "🎡 Memutar Kincir Angin" },
+                { id: "t4", name: "📺 Menyalakan TV" },
+                { id: "t1", name: "👕 Menjemur Pakaian" },
+                { id: "t3", name: "🏗️ Menggerakkan PLTA" }
+            ]
+        };
+
+        const MISI_3_DATA = {
+            tv: { fixed: false, bonus: 15, name: "TV dimatikan karena tidak ditonton." },
+            light: { fixed: false, bonus: 15, name: "Lampu dimatikan karena sudah siang hari." },
+            water: { fixed: false, bonus: 15, name: "Keran air ditutup rapat agar air tidak terbuang." },
+            ac: { fixed: false, bonus: 15, name: "AC diatur suhunya dan jendela ditutup agar hemat." }
+        };
+
+        // --- STATE GAME ---
+        let score = 0;
+        let currentLevel = 0; // 0: Start, 1: Misi 1, 2: Misi 2, 3: Misi 3, 4: Selesai
+        let m1Index = 0;
+        let m2SelectedSource = null;
+        let m2SelectedTarget = null;
+        let m2MatchesCount = 0;
+        let m3FixedCount = 0;
+        let soundEnabled = true;
+
+        // --- MUSIK LATAR (BACKGROUND MUSIC) ---
+        const bgMusic = new Audio("https://github.com/Suci1788/Musikgimku/raw/refs/heads/main/Banner_of_the_Morning.mp3");
+        bgMusic.loop = true;
+        bgMusic.volume = 0.25; // Mengatur volume agar ramah di telinga anak-anak (25%)
+
+        // --- SISTEM SUARA (WEB AUDIO API - Tanpa Aset Eksternal) ---
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    // Bunyi ceria naik
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.15);
+                } else if (type === 'wrong') {
+                    // Bunyi dengung turun
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                } else if (type === 'click') {
+                    // Klik singkat
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'level-up') {
+                    // Fanfare kemenangan singkat
+                    const now = audioCtx.currentTime;
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start();
+                    osc.stop(now + 0.5);
+                }
+            } catch (e) {
+                console.log("Audio not supported or blocked by browser");
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 18.75V5.25L7.75 9.5H4.5v5h3.25L12 18.75z" />`;
+                // Melanjutkan musik jika suara dinyalakan kembali saat permainan sedang aktif
+                if (currentLevel > 0) {
+                    bgMusic.play().catch(e => console.log("Gagal memutar musik:", e));
+                }
+            } else {
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />`;
+                // Menghentikan musik latar jika suara dinonaktifkan
+                bgMusic.pause();
+            }
+        }
+
+        // --- SISTEM POPUP FEEDBACK ---
+        function showPopup(emoji, text, isCorrect) {
+            const pop = document.getElementById('pop-feedback');
+            document.getElementById('pop-emoji').textContent = emoji;
+            document.getElementById('pop-text').textContent = text;
+            pop.className = `absolute bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg font-bold text-sm flex items-center space-x-2 z-50 transition-all duration-300 ${isCorrect ? 'bg-emerald-500' : 'bg-rose-500'} text-white opacity-100 scale-110`;
+            playSound(isCorrect ? 'correct' : 'wrong');
+            setTimeout(() => {
+                pop.classList.add('opacity-0', 'scale-95');
+                pop.classList.remove('opacity-100', 'scale-110');
+            }, 1800);
+        }
+
+        // --- UPDATE TAMPILAN HEADER ---
+        function updateUI() {
+            document.getElementById('score-val').textContent = score;
+            const progress = document.getElementById('mission-progress');
+            const levelIndicator = document.getElementById('level-indicator');
+
+            if (currentLevel === 1) {
+                progress.style.width = '33%';
+                levelIndicator.textContent = "Misi 1: Sortir Energi";
+            } else if (currentLevel === 2) {
+                progress.style.width = '66%';
+                levelIndicator.textContent = "Misi 2: Pasangan Kekuatan";
+            } else if (currentLevel === 3) {
+                progress.style.width = '100%';
+                levelIndicator.textContent = "Misi 3: Hemat Energi di Rumah";
+            } else if (currentLevel >= 4) {
+                progress.style.width = '100%';
+                levelIndicator.textContent = "Petualangan Selesai!";
+            }
+        }
+
+        // --- NAVIGASI MISI ---
+        function changeKikoSpeech(text) {
+            document.getElementById('kiko-speech').textContent = text;
+        }
+
+        function showPage(pageId) {
+            const pages = ['page-start', 'page-misi-1', 'page-misi-2', 'page-misi-3', 'page-end-screen'];
+            pages.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id).classList.remove('flex');
+            });
+            const activePage = document.getElementById(pageId);
+            activePage.classList.remove('hidden');
+            activePage.classList.add('flex');
+        }
+
+        // --- MEMULAI PERMAINAN ---
+        function startMission() {
+            playSound('click');
+            // Mainkan musik latar (mengingat browser memblokir autoplay sebelum ada interaksi pengguna)
+            if (soundEnabled) {
+                bgMusic.play().catch(e => console.log("Pemutaran musik diblokir oleh kebijakan browser:", e));
+            }
+            currentLevel = 1;
+            score = 0;
+            m1Index = 0;
+            updateUI();
+            showPage('page-misi-1');
+            loadM1Card();
+        }
+
+        // ================== MISI 1: SORTIR ENERGI ==================
+        function loadM1Card() {
+            if (m1Index >= MISI_1_DATA.length) {
+                // Selesai Misi 1, Lanjut Misi 2
+                playSound('level-up');
+                currentLevel = 2;
+                updateUI();
+                showPage('page-misi-2');
+                setupMisi2();
+                return;
+            }
+            const data = MISI_1_DATA[m1Index];
+            const card = document.getElementById('m1-card');
+            
+            // Efek transisi masuk
+            card.classList.add('scale-75', 'opacity-0');
+            setTimeout(() => {
+                document.getElementById('m1-emoji').textContent = data.emoji;
+                document.getElementById('m1-title').textContent = data.name;
+                document.getElementById('m1-desc').textContent = data.desc;
+                card.classList.remove('scale-75', 'opacity-0');
+            }, 150);
+
+            changeKikoSpeech(`Menurutmu, apakah "${data.name}" itu energi terbarukan (ramah lingkungan & tidak bisa habis) atau tak terbarukan?`);
+        }
+
+        function m1Answer(answerType) {
+            const correctType = MISI_1_DATA[m1Index].type;
+            const name = MISI_1_DATA[m1Index].name;
+            if (answerType === correctType) {
+                score += 15;
+                showPopup("✨ Correct!", `Hebat! ${name} adalah jawaban yang benar!`, true);
+            } else {
+                showPopup("❌ Kurang Tepat", `Kurang tepat. ${name} termasuk energi ${correctType === 'terbarukan' ? 'Terbarukan' : 'Tak Terbarukan'}.`, false);
+            }
+            m1Index++;
+            updateUI();
+            setTimeout(loadM1Card, 1500);
+        }
+
+        // ================== MISI 2: KEKUATAN ALAM ==================
+        function setupMisi2() {
+            changeKikoSpeech("Misi 2: Bantu pasangkan sumber energi dengan kegunaannya dalam kehidupan sehari-hari, yuk!");
+            m2MatchesCount = 0;
+            m2SelectedSource = null;
+            m2SelectedTarget = null;
+            
+            const sourceCol = document.getElementById('m2-sources');
+            const targetCol = document.getElementById('m2-targets');
+            
+            sourceCol.innerHTML = '';
+            targetCol.innerHTML = '';
+
+            // Acak urutan targets agar menantang
+            const shuffledTargets = [...MISI_2_DATA.targets].sort(() => Math.random() - 0.5);
+
+            MISI_2_DATA.sources.forEach(src => {
+                const btn = document.createElement('button');
+                btn.id = src.id;
+                btn.className = "w-full text-left bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-2 border-emerald-300 rounded-xl p-3 font-semibold text-xs sm:text-sm transition flex items-center justify-between";
+                btn.innerHTML = `<span>${src.name}</span><span class="m2-indicator text-xs text-emerald-400">❓</span>`;
+                btn.onclick = () => selectM2Source(src.id);
+                sourceCol.appendChild(btn);
+            });
+
+            shuffledTargets.forEach(tgt => {
+                const btn = document.createElement('button');
+                btn.id = tgt.id;
+                btn.className = "w-full text-left bg-amber-50 hover:bg-amber-100 text-amber-900 border-2 border-amber-300 rounded-xl p-3 font-semibold text-xs sm:text-sm transition flex items-center justify-between";
+                btn.innerHTML = `<span>${tgt.name}</span><span class="m2-indicator text-xs text-amber-400">❓</span>`;
+                btn.onclick = () => selectM2Target(tgt.id);
+                targetCol.appendChild(btn);
+            });
+        }
+
+        function selectM2Source(id) {
+            playSound('click');
+            if (m2SelectedSource) {
+                document.getElementById(m2SelectedSource).classList.remove('ring-4', 'ring-teal-400');
+            }
+            m2SelectedSource = id;
+            document.getElementById(id).classList.add('ring-4', 'ring-teal-400');
+            checkM2Match();
+        }
+
+        function selectM2Target(id) {
+            playSound('click');
+            if (m2SelectedTarget) {
+                document.getElementById(m2SelectedTarget).classList.remove('ring-4', 'ring-amber-400');
+            }
+            m2SelectedTarget = id;
+            document.getElementById(id).classList.add('ring-4', 'ring-amber-400');
+            checkM2Match();
+        }
+
+        function checkM2Match() {
+            if (m2SelectedSource && m2SelectedTarget) {
+                const sourceObj = MISI_2_DATA.sources.find(s => s.id === m2SelectedSource);
+                
+                if (sourceObj.match === m2SelectedTarget) {
+                    // Cocok!
+                    score += 20;
+                    showPopup("✨ Benar!", "Hubungan yang tepat sekali!", true);
+                    
+                    const srcBtn = document.getElementById(m2SelectedSource);
+                    const tgtBtn = document.getElementById(m2SelectedTarget);
+                    
+                    srcBtn.classList.replace('bg-emerald-50', 'bg-emerald-200');
+                    srcBtn.classList.add('pointer-events-none', 'line-through', 'opacity-60');
+                    srcBtn.querySelector('.m2-indicator').textContent = "✅";
+                    
+                    tgtBtn.classList.replace('bg-amber-50', 'bg-amber-200');
+                    tgtBtn.classList.add('pointer-events-none', 'line-through', 'opacity-60');
+                    tgtBtn.querySelector('.m2-indicator').textContent = "✅";
+                    
+                    srcBtn.classList.remove('ring-4', 'ring-teal-400');
+                    tgtBtn.classList.remove('ring-4', 'ring-amber-400');
+
+                    m2MatchesCount++;
+                    updateUI();
+
+                    if (m2MatchesCount === MISI_2_DATA.sources.length) {
+                        setTimeout(() => {
+                            playSound('level-up');
+                            currentLevel = 3;
+                            updateUI();
+                            showPage('page-misi-3');
+                            setupMisi3();
+                        }, 1200);
+                    }
+                } else {
+                    // Salah
+                    showPopup("❌ Salah", "Pasangan kurang cocok. Coba yang lain!", false);
+                    document.getElementById(m2SelectedSource).classList.remove('ring-4', 'ring-teal-400');
+                    document.getElementById(m2SelectedTarget).classList.remove('ring-4', 'ring-amber-400');
+                }
+                m2SelectedSource = null;
+                m2SelectedTarget = null;
+            }
+        }
+
+        // ================== MISI 3: HEMAT ENERGI ==================
+        function setupMisi3() {
+            changeKikoSpeech("Misi 3: Tolong amati ruangan di bawah. Banyak sekali pemborosan energi listrik dan air! Ketuk benda boros tersebut untuk mematikannya!");
+            m3FixedCount = 0;
+            document.getElementById('m3-count-text').textContent = `Sisa Alat Boros: 4 / 4`;
+            
+            // Setel ulang tombol ke tampilan awal (boros)
+            const keys = ['tv', 'light', 'water', 'ac'];
+            keys.forEach(key => {
+                MISI_3_DATA[key].fixed = false;
+                const container = document.getElementById(`house-${key}`);
+                const statusBadge = container.querySelector('.id-status');
+                const btn = document.getElementById(`${key}-btn`);
+                
+                statusBadge.textContent = "BOROS!";
+                statusBadge.className = "absolute top-2 right-2 px-1.5 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-bold rounded-full animate-pulse id-status";
+                container.classList.add('border-orange-300');
+                container.classList.remove('border-emerald-400', 'bg-emerald-50/50', 'pointer-events-none');
+                btn.className = "mt-2 text-[10px] bg-rose-500 text-white font-bold px-2 py-1 rounded";
+                
+                if (key === 'tv') {
+                    document.getElementById('tv-icon').textContent = "📺";
+                    btn.textContent = "Matikan TV";
+                } else if (key === 'light') {
+                    document.getElementById('light-icon').textContent = "💡";
+                    btn.textContent = "Matikan Lampu";
+                } else if (key === 'water') {
+                    document.getElementById('water-icon').textContent = "🚰";
+                    btn.textContent = "Tutup Keran";
+                } else if (key === 'ac') {
+                    document.getElementById('ac-icon').textContent = "🥶";
+                    btn.textContent = "Atur AC";
+                }
+            });
+        }
+
+        function fixWaste(itemKey) {
+            const item = MISI_3_DATA[itemKey];
+            if (item.fixed) return;
+
+            playSound('click');
+            item.fixed = true;
+            score += item.bonus;
+            m3FixedCount++;
+            
+            // Perbarui Elemen Visual yang diperbaiki
+            const container = document.getElementById(`house-${itemKey}`);
+            const statusBadge = container.querySelector('.id-status');
+            const btn = document.getElementById(`${itemKey}-btn`);
+
+            statusBadge.textContent = "HEMAT!";
+            statusBadge.className = "absolute top-2 right-2 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-full id-status";
+            container.classList.replace('border-orange-300', 'border-emerald-400');
+            container.classList.add('bg-emerald-50/50', 'pointer-events-none');
+            
+            btn.className = "mt-2 text-[10px] bg-emerald-500 text-white font-bold px-2 py-1 rounded";
+            btn.textContent = "Selesai ✅";
+
+            if (itemKey === 'tv') {
+                document.getElementById('tv-icon').textContent = "🔌"; // tv mati
+            } else if (itemKey === 'light') {
+                document.getElementById('light-icon').textContent = "❌💡"; // lampu padam
+            } else if (itemKey === 'water') {
+                document.getElementById('water-icon').textContent = "💧"; // keran rapat
+            } else if (itemKey === 'ac') {
+                document.getElementById('ac-icon').textContent = "🍃"; // hemat suhu ruangan
+            }
+
+            showPopup("💚 Hebat!", item.name, true);
+            document.getElementById('m3-count-text').textContent = `Sisa Alat Boros: ${4 - m3FixedCount} / 4`;
+            updateUI();
+
+            if (m3FixedCount === 4) {
+                setTimeout(() => {
+                    playSound('level-up');
+                    currentLevel = 4;
+                    updateUI();
+                    showPage('page-end-screen');
+                    document.getElementById('cert-score').textContent = `${score} Poin`;
+                    changeKikoSpeech("Horeee! Kamu telah lulus misi menyelamatkan bumi dan menjadi Detektif Energi Terbaik!");
+                }, 1500);
+            }
+        }
+
+        // ================== RESET PERMAINAN ==================
+        function resetGame() {
+            playSound('click');
+            // Hentikan musik latar dan kembalikan ke awal
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            currentLevel = 0;
+            score = 0;
+            updateUI();
+            showPage('page-start');
+            changeKikoSpeech("Klik tombol 'MULAI MISI' untuk menjelajah dunia energi!");
+        }
+
+        // Jalankan Inisialisasi awal
+        window.onload = function() {
+            updateUI();
+        };
+    </script>
+</body>
+</html>
